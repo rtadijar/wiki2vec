@@ -1,8 +1,6 @@
 embeddings/
-scratch/
-data/
+dataset/
 models/
-
 
 .vscode/
 .ipynb_checkpoints/

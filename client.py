@@ -3,12 +3,7 @@ import mwclient
 from mwclient.page import Page
 from mwclient import Site
 
-import nltk
-
-import warnings
-warnings.filterwarnings('ignore')
-
-ua = 'WikiRacer/0.1 (radusinovictadija@gmail.com)'
+ua = 'WikiRacer/1.0 ()'
 
 wiki = Site('en.wikipedia.org', clients_useragent=ua)
 wiki_api = 'http://en.wikipedia.org/w/api.php'

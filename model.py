@@ -22,7 +22,7 @@ class MultiplicativeAttention(nn.Module):
 
         return res, attn
 
-class AdditiveSelfAttention(nn.Module):
+class AdditiveAttention(nn.Module):
     
     def __init__(self, d_model, dropout=0.1):
         super().__init__()
@@ -55,7 +55,7 @@ class MultiHeadAttention(nn.Module):
         self.d_qk = d_qk
         self.d_v = d_v
         
-        self.num_heads = num_heads
+        self.num_heads = nn.Parameter(num_heads)
         
         self.dropout = nn.Dropout(dropout)
         
@@ -80,7 +80,7 @@ class MultiHeadAttention(nn.Module):
         v_proj = self.w_v(v).view(v.shape[0], v.shape[1], self.num_heads, self.d_v) 
 
         if self.track_agreement:
-        	self.v_agreement += torch.einsum('bshd, bsnd->', F.normalize(v_proj, dim=3), F.normalize(v_proj, dim=3)) / self.num_heads**2
+            self.v_agreement += torch.einsum('bshd, bsnd->', F.normalize(v_proj, dim=3), F.normalize(v_proj, dim=3)) / self.num_heads**2
 
         if mask is None:
             q, attn = self.attention(q_proj.transpose(1, 2), k_proj.transpose(1, 2), v_proj.transpose(1, 2))
@@ -97,7 +97,7 @@ class MultiHeadAttention(nn.Module):
         return q, attn
 
     def clear_agreement(self):
-    	self.v_agreement = 0
+        self.v_agreement = 0
 
 class NonlinearFF(nn.Module):
     def __init__(self, d_in, d_hid, dropout=0.1):
@@ -126,7 +126,7 @@ class TitleEmbedding(nn.Module):
             
         self.mh_attn = MultiHeadAttention(d_model, num_heads, d_qk, d_v, track_agreement=track_agreement, dropout=dropout)
         self.nff = NonlinearFF(d_model, d_hid if d_hid is not None else d_model * 4, dropout=dropout)
-        self.add_attn = AdditiveSelfAttention(d_model, dropout=dropout)
+        self.add_attn = AdditiveAttention(d_model, dropout=dropout)
         self.layer_norm = nn.LayerNorm(d_model, eps=1e-6)
         
         self.padding_idx = padding_idx
@@ -146,4 +146,3 @@ class TitleEmbedding(nn.Module):
     
     def load_embeddings(embeddings):
         self.embeddings = nn.Embedding.from_pretrained(embeddings, freeze=False, sparse=True)
-    
