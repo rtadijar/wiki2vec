@@ -55,7 +55,7 @@ class MultiHeadAttention(nn.Module):
         self.d_qk = d_qk
         self.d_v = d_v
         
-        self.num_heads = nn.Parameter(num_heads)
+        self.num_heads = num_heads
         
         self.dropout = nn.Dropout(dropout)
         

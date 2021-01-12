@@ -1,7 +1,9 @@
 embeddings/
+data/
 dataset/
 models/
 
 .vscode/
 .ipynb_checkpoints/
 
+__pycache__/
